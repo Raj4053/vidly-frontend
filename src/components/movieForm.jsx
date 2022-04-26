@@ -1,21 +1,45 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import Joi from "joi-browser";
+import Form from "./common/form";
 
-const MovieForum = ({match}) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+class MovieForm extends Form {
+  state = {
+    data: { title: "", genreId: "", numberInStock: "", rate: "" },
+    genres: [],
+    errors: {},
+  };
 
-  return (
-    <div>
-      <h1>Movie Forum {id}</h1>
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate("/movies")}
-      >
-        Save
-      </button>
-    </div>
-  );
-};
+  schema = {
+    _id: Joi.string(),
+    title: Joi.string().required().label("Title"),
+    genreId: Joi.string().required().label('Genre'),
+    numberInStock: Joi.number()
+      .min(0)
+      .max(100)
+      .required()
+      .label("Number In Stock"),
+    rate: Joi.number().min(0).max(10).required(),
+  };
 
-export default MovieForum;
+  doSubmit = () => {
+    //Call The Server
+    console.log("Movie Saved");
+  };
+
+  render() {
+    return (
+      <div>
+        <h1>Movie Form</h1>
+        <form onSubmit={this.handleSubmit}>
+          {this.renderInput("title", "Title")}
+          {/* {this.renderInput('title', "Title")} */}
+          {this.renderInput("numberInStock", "Number In Stock")}
+          {this.renderInput("rate", "Rate")}
+          {this.renderButton("Save")}
+        </form>
+      </div>
+    );
+  }
+}
+
+export default MovieForm;
